@@ -1,7 +1,7 @@
 local composer = require("composer")
 local scene = composer.newScene()
 local physics = require("physics")
-local settings = require("setting.settings")
+local settings = require("scene.settings")
 
 physics.start()
 physics.pause()
