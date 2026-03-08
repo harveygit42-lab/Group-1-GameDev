@@ -380,8 +380,8 @@ function scene:create(e)
             audio.pause(bgMusicChannel)
         end
 
-        composer.removeScene("game")
-        composer.gotoScene("menu", {effect = "fade", time = 400})
+        composer.removeScene("scene.game")
+        composer.gotoScene("scene.menu", {effect = "fade", time = 400})
     end
 
 
