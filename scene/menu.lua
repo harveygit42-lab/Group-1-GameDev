@@ -9,17 +9,17 @@ function scene:create(event)
 
     local clickSound = audio.loadSound("clickSound.mp3")
 
-    background = display.newImageRect("background.jpg", display.actualContentWidth, display.actualContentHeight)
+    background = display.newImageRect("images/background.jpg", display.actualContentWidth, display.actualContentHeight)
     background.x = display.contentCenterX
     background.y = display.contentCenterY
     sceneGroup:insert(background)
 
-    playBtn = display.newImageRect("playBtn.png", 170, 90)
+    playBtn = display.newImageRect("images/playBtn.png", 170, 90)
     playBtn.x = display.contentCenterX
     playBtn.y = display.contentCenterY + 60
     sceneGroup:insert(playBtn)
 
-    settingBtn = display.newImageRect("settingBtn.png",100, 60)
+    settingBtn = display.newImageRect("images/settingBtn.png",100, 60)
     settingBtn.x = display.contentCenterX
     settingBtn.y = display.contentCenterY + 180
     sceneGroup:insert(settingBtn)

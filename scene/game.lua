@@ -94,14 +94,14 @@ function scene:create(e)
     -- =====================================================
 
     background = display.newImageRect(
-        "background.jpg",
+        "images/background.jpg",
         display.actualContentWidth,
         display.actualContentHeight
     )
     background.x = display.contentCenterX
     background.y = display.contentCenterY
 
-    resetButton = display.newImageRect("resetButton.png", 50, 50)
+    resetButton = display.newImageRect("images/resetButton.png", 50, 50)
     resetButton.anchorX = 1
     resetButton.anchorY = 0
     resetButton.x = display.safeScreenOriginX + display.safeActualContentWidth
@@ -117,7 +117,7 @@ function scene:create(e)
     menuBtn:setFillColor(0,0,0)
     
 
-    gameOver = display.newImageRect("gameOver.png", 300, 300)
+    gameOver = display.newImageRect("images/gameOver.png", 300, 300)
     gameOver.x = display.contentCenterX
     gameOver.y = display.contentCenterY + 10
     gameOver.isVisible = false
@@ -132,11 +132,11 @@ function scene:create(e)
     timesUpText:setFillColor(1, 0, 0)
     timesUpText.isVisible = false
 
-    balloon = display.newImageRect("balloon.png", 130, 130)
+    balloon = display.newImageRect("images/balloon.png", 130, 130)
     balloon.x = display.contentCenterX
     balloon.y = display.contentCenterY
 
-    startBtn = display.newImageRect("startBtn.png", 150, 150)
+    startBtn = display.newImageRect("images/startBtn.png", 150, 150)
     startBtn.x = display.contentCenterX
     startBtn.y = display.contentCenterY + 100
     startBtn.isVisible = true
@@ -160,11 +160,11 @@ function scene:create(e)
     timerText:setFillColor(1, 0, 0)
     timerText.isVisible = false
 
-    platform = display.newImageRect("platform.png", 300, 50)
+    platform = display.newImageRect("images/platform.png", 300, 50)
     platform.x = display.contentCenterX
     platform.y = display.contentHeight - 2
 
-    platform2 = display.newImageRect("platform.png", 300, 50)
+    platform2 = display.newImageRect("images/platform.png", 300, 50)
     platform2.x = display.contentCenterX
     platform2.y = display.screenOriginY + 130
     platform2.rotation = 180
