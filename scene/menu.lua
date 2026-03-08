@@ -7,7 +7,7 @@ local startBtn
 function scene:create(event)
     local sceneGroup = self.view
 
-    local clickSound = audio.loadSound("clickSound.mp3")
+    local clickSound = audio.loadSound("bgmusic/bgclickSound.mp3")
 
     background = display.newImageRect("images/background.jpg", display.actualContentWidth, display.actualContentHeight)
     background.x = display.contentCenterX

@@ -185,7 +185,7 @@ function scene:create(e)
     -- AUDIO
     -- =====================================================
 
-    bgMusic = audio.loadStream("BalloonGameBGMusic.mp3")
+    bgMusic = audio.loadStream("bgmusic/BalloonGameBGMusic.mp3")
     bgMusicChannel = audio.play(bgMusic, {loops=-1, fadein=2000})
     local isMuted = composer.getVariable("isMuted") or false
     if isMuted then
@@ -195,8 +195,8 @@ function scene:create(e)
         audio.setVolume(0.3)
     end
 
-    tapSound = audio.loadSound("tapSound.mp3")
-    gameOverSound = audio.loadSound("gameOver.mp3")
+    tapSound = audio.loadSound("bgmusic/bgtapSound.mp3")
+    gameOverSound = audio.loadSound("bgmusic/gameOver.mp3")
 
     -- =====================================================
     -- INITIALIZATION
