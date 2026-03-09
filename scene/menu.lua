@@ -197,9 +197,9 @@ function scene:create(event)
 
     local function goToGame()
         if selectedTime then
-            composer.gotoScene("game", { effect = "fade", time = 400, params = { timeLimit = selectedTime } })
+            composer.gotoScene("scene.game", { effect = "fade", time = 400, params = { timeLimit = selectedTime } })
         else
-            composer.gotoScene("game", { effect = "fade", time = 400 })
+            composer.gotoScene("scene.game", { effect = "fade", time = 400 })
         end
     end
 
