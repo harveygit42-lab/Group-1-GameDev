@@ -101,7 +101,7 @@ function scene:create(e)
     background.x = display.contentCenterX
     background.y = display.contentCenterY
 
-    resetButton = display.newImageRect("images/resetButton.png", 50, 50)
+    resetButton = display.newImageRect("images/resetButton.png", 100, 100)
     resetButton.anchorX = 1
     resetButton.anchorY = 0
     resetButton.x = display.safeScreenOriginX + display.safeActualContentWidth
@@ -109,7 +109,7 @@ function scene:create(e)
     resetButton.isVisible = true
     
 
-    menuBtn = display.newText("Menu", 0, 0,"PixelFont.ttf", 24)
+    menuBtn = display.newText("Menu", 0, 0,"PixelFont.ttf", 48)
     menuBtn.anchorX = 0
     menuBtn.anchorY = 0
     menuBtn.x = display.safeScreenOriginX + 10
