@@ -14,10 +14,49 @@ function scene:create(event)
     background.y = display.contentCenterY
     sceneGroup:insert(background)
 
-    playBtn = display.newImageRect("images/playBtn.png", 170, 90)
+    -- 1. Setup the button and IMMEDIATELY insert it into sceneGroup
+    playBtn = display.newImageRect(sceneGroup, "images/playBtn.png", 170, 80)
     playBtn.x = display.contentCenterX
-    playBtn.y = display.contentCenterY + 60
-    sceneGroup:insert(playBtn)
+    playBtn.y = display.contentCenterY + 100 -- Lowered to avoid overlapping balloon
+
+    -- 2. Improved handle function
+    local function handlePlayBtn( event )
+       if ( event.phase == "began" ) then
+        -- 1. Change the image
+        playBtn.fill = { type="image", filename="images/playBtnClicked.png" }
+        
+        -- 2. Make it smaller (Squash effect)
+        playBtn.height = 70 
+        
+        -- 3. Move it down slightly so the bottom stays in the same place
+        playBtn.y = playBtn.y + 5 
+        
+        display.getCurrentStage():setFocus( playBtn )
+
+        elseif ( event.phase == "ended" or event.phase == "cancelled" ) then
+        -- 1. Change back to the normal image
+        playBtn.fill = { type="image", filename="images/playBtn.png" }
+        
+        -- 2. Restore the original height
+        playBtn.height = 80 
+        
+        -- 3. Restore the original position
+        playBtn.y = playBtn.y - 5 
+        
+        display.getCurrentStage():setFocus( nil )
+        
+        if ( event.phase == "ended" ) then
+            composer.gotoScene("scene.game", { effect = "fade", time = 400 })
+        end
+        end
+        return true
+    end
+
+    playBtn:addEventListener( "touch", handlePlayBtn )
+    -- playBtn = display.newImageRect("images/playBtn.png", 170, 90)
+    -- playBtn.x = display.contentCenterX
+    -- playBtn.y = display.contentCenterY + 60
+    -- sceneGroup:insert(playBtn)
 
     settingBtn = display.newImageRect("images/settingBtn.png",100, 60)
     settingBtn.x = display.contentCenterX
