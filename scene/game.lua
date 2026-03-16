@@ -177,7 +177,6 @@ function scene:create(event)
     })
     tapText:setFillColor(0, 1, 0)
 
-<<<<<<< Updated upstream
     timeText = display.newText({
         parent = sceneGroup,
         text = string.format("%02d:%02d", math.floor(timerSeconds / 60), timerSeconds % 60),
@@ -187,16 +186,6 @@ function scene:create(event)
         fontSize = 32
     })
     timeText:setFillColor(1, 1, 0)
-=======
-    tapText = display.newText(
-        tapCount,
-        display.contentCenterX,
-        40,
-        "PixelFont.ttf",
-        80
-    )
-    tapText:setFillColor(0, 100, 0)
->>>>>>> Stashed changes
 
     -- Initialize physics
     physics.addBody(platform, "static")

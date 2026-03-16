@@ -43,7 +43,6 @@ function scene:create(event)
     local tapText
     local balloon
 
-<<<<<<< Updated upstream
     --Load and Save Functions
     local function loadHighScore()
         local path = system.pathForFile("highscore.txt", system.DocumentsDirectory)
@@ -56,51 +55,6 @@ function scene:create(event)
         end
         return 0
     end
-=======
-    -- 1. Setup the button and IMMEDIATELY insert it into sceneGroup
-    playBtn = display.newImageRect(sceneGroup, "images/playBtn.png", 170, 80)
-    playBtn.x = display.contentCenterX
-    playBtn.y = display.contentCenterY + 100 -- Lowered to avoid overlapping balloon
-
-    -- 2. Improved handle function
-    local function handlePlayBtn( event )
-        if ( event.phase == "began" ) then
-        -- 1. Change the image
-        playBtn.fill = { type="image", filename="images/playBtnClicked.png" }
-        
-        -- 2. Make it smaller (Squash effect)
-        playBtn.height = 50 
-        
-        -- 3. Move it down slightly so the bottom stays in the same place
-        playBtn.y = playBtn.y + 5 
-        
-        display.getCurrentStage():setFocus( playBtn )
-
-       elseif ( event.phase == "ended" or event.phase == "cancelled" ) then
-        -- 1. Change back to the normal image
-        playBtn.fill = { type="image", filename="images/playBtn.png" }
-        
-        -- 2. Restore the original height
-        playBtn.height = 80 
-        
-        -- 3. Restore the original position
-        playBtn.y = playBtn.y - 5 
-        
-        display.getCurrentStage():setFocus( nil )
-        
-        if ( event.phase == "ended" ) then
-            composer.gotoScene("scene.game", { effect = "fade", time = 400 })
-        end
-        end
-        return true
-    end
-
-    playBtn:addEventListener( "touch", handlePlayBtn )
-    
-    -- playBtn = display.newImageRect("images/playBtn.png", 170, 80)
-    -- playBtn.x = display.contentCenterX
-    -- playBtn.y = display.contentCenterY + 60
->>>>>>> Stashed changes
 
     local function saveHighScore(value)
         if not value then value = 0 end
@@ -514,7 +468,7 @@ function scene:create(event)
 
         if menuButtonGroup then sceneGroup:insert(menuButtonGroup) end
         pcall(function()
-            startButtonGroup = createCustomButton("START PLAYING", display.contentCenterY + 100, {0, 0.6, 0}, startPlaying)
+            startButtonGroup = createCustomButton("START", display.contentCenterY + 100, {0, 0.6, 0}, startPlaying)
             extraButtonGroup = createCustomButton("QUIT", display.contentCenterY + 200, {0.8, 0, 0}, function() native.requestExit(); return true end)
         end)
         return true
