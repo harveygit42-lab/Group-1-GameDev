@@ -88,7 +88,7 @@ function scene:create(event)
     end
 
     -- =====================================================
-    -- DIFFICULTY DROPDOWN (FIXED)
+    -- DIFFICULTY DROPDOWN (FIXED) hysss
     -- =====================================================
 
     local diffLabel = display.newText(sceneGroup, "Level of Difficulty:",
