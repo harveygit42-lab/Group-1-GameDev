@@ -393,9 +393,12 @@ local function startCountdown(remaining)
     if remaining and type(remaining) == "number" then
         timerSeconds = math.max(remaining, 0)
     else
-        timerSeconds = (timerMinutes or 1) * 60
+        -- Ensure timerMinutes is valid before using
+        local effectiveTimer = (timerMinutes and timerMinutes > 0) and timerMinutes or 1
+        timerSeconds = effectiveTimer * 60
     end
     
+    -- Ensure we never have 0 or negative timer
     if timerSeconds <= 0 then
         timerSeconds = 60
     end
@@ -576,10 +579,18 @@ function scene:create(event)
     timerMinutes = loadTimerSetting()
     sfxOn = loadSfxSetting()
 
-    -- Override timer if passed from home
-    if event.params and event.params.timerMinutes then
-        timerMinutes = event.params.timerMinutes
-        saveTimerSetting(timerMinutes)  -- Save the selection
+    -- Override timer if passed from home (via composer variable)
+    local composerTimer = composer.getVariable("timerMinutes")
+    if composerTimer then
+        timerMinutes = math.max(1, math.min(tonumber(composerTimer) or 1, 5))
+        saveTimerSetting(timerMinutes)
+        composer.setVariable("timerMinutes", nil)  -- Clear it
+    elseif event.params and event.params.timeLimit then
+        local timerValue = tonumber(event.params.timeLimit)
+        if timerValue then
+            timerMinutes = math.max(1, math.min(math.floor(timerValue / 60), 5))
+            saveTimerSetting(timerMinutes)
+        end
     end
 
     initializeGame()
@@ -666,7 +677,21 @@ function scene:destroy(event)
 end
 
 function scene:show(event)
-    if event.phase == "did" then
+    if event.phase == "will" then
+        -- Check for timer selection from home (via composer variable)
+        local composerTimer = composer.getVariable("timerMinutes")
+        if composerTimer then
+            timerMinutes = math.max(1, math.min(tonumber(composerTimer) or 1, 5))
+            saveTimerSetting(timerMinutes)
+            composer.setVariable("timerMinutes", nil)  -- Clear it
+        elseif event.params and event.params.timeLimit then
+            local timerValue = tonumber(event.params.timeLimit)
+            if timerValue then
+                timerMinutes = math.max(1, math.min(math.floor(timerValue / 60), 5))
+                saveTimerSetting(timerMinutes)
+            end
+        end
+    elseif event.phase == "did" then
         -- Reset game when returning to the scene
         if gameOver or gameStarted then
             restartGame()

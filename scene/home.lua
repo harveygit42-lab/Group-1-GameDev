@@ -149,7 +149,8 @@ function scene:create(event)
 
     playBtn:addEventListener("tap", function()
         closeDropdown()  -- Ensure dropdown is closed
-        composer.gotoScene("scene.menu", {effect = "fade", time = 500, params = {timerMinutes = selectedTimer}})
+        composer.setVariable("timerMinutes", selectedTimer)
+        composer.gotoScene("scene.menu", {effect = "fade", time = 500})
         return true
     end)
 
