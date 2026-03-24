@@ -36,6 +36,7 @@ local extraButtonGroup
 local gameOverText
 local timeUpText
 local scoreText
+local highScoreText
 local restartButton
 local backButton
 local quitButton
@@ -345,7 +346,7 @@ local function doGameOver(isTimeUp)
         end)
 
         pcall(function()
-            local highScoreText = display.newText(sceneGroup, "High Score: " .. tostring(highScore), display.contentCenterX, display.contentCenterY - 60, native.systemFontBold, 35)
+            highScoreText = display.newText(sceneGroup, "High Score: " .. tostring(highScore), display.contentCenterX, display.contentCenterY - 60, native.systemFontBold, 35)
             highScoreText:setFillColor(0, 1, 0)
         end)
     else
@@ -360,7 +361,7 @@ local function doGameOver(isTimeUp)
         end)
 
         pcall(function()
-            local highScoreText = display.newText(sceneGroup, "High Score: " .. tostring(highScore), display.contentCenterX, display.contentCenterY - 30, native.systemFontBold, 35)
+            highScoreText = display.newText(sceneGroup, "High Score: " .. tostring(highScore), display.contentCenterX, display.contentCenterY - 30, native.systemFontBold, 35)
             highScoreText:setFillColor(0, 1, 0)
         end)
     end
@@ -473,6 +474,12 @@ restartGame = function()
         pcall(function() display.remove(scoreText) end)
         scoreText = nil 
     end
+
+    if highScoreText then 
+        pcall(function() display.remove(highScoreText) end)
+        highScoreText = nil 
+    end
+    
     if restartButton then 
         pcall(function() display.remove(restartButton) end)
         restartButton = nil 

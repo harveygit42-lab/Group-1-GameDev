@@ -264,6 +264,7 @@ function scene:create(e)
         gameOverPlayed = false
         stopCountdown()
         timesUpText.isVisible = false
+        highScoreText.isVisible = false
     end
 
     onCollison = function()
@@ -295,6 +296,7 @@ function scene:create(e)
         end
 
         checkHighScore()
+        highScoreText.isVisible = true
     end
 
     timeUp = function()
@@ -326,8 +328,7 @@ function scene:create(e)
             audio.pause(bgMusicChannel)
         end
 
-        checkHighScore()
-    end
+        checkHighScore()        highScoreText.isVisible = true    end
 
     function startGame()
         if physics and physics.start then physics.start() end
