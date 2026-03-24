@@ -1,4 +1,4 @@
 --yasmien
 local composer = require("composer")
 
-composer.gotoScene("scene.menu")
+composer.gotoScene("scene.home")
