@@ -1,4 +1,5 @@
 --yasmien
+local composer = require("composer")
 local settings = {}
 
 function settings.init(sceneGroup, display, native, timer)
@@ -9,9 +10,6 @@ function settings.init(sceneGroup, display, native, timer)
     local mtIcon
     local menuSfxLabel
     local stIcon
-    local timerDropdown
-    local timerDropdownIcon
-    local menuTimerLabel
 
     -- Store reference to callbacks
     local callbacks = {}
@@ -229,7 +227,7 @@ function settings.init(sceneGroup, display, native, timer)
         end)
 
         pcall(function()
-            local panelW, panelH = 320, 350
+            local panelW, panelH = 300, 380
             local panel = display.newRoundedRect(menuPanelGroup, display.contentCenterX, display.contentCenterY, panelW, panelH, 12)
             panel:setFillColor(0.1, 0.1, 0.1)
             panel.strokeWidth = 3
@@ -245,52 +243,46 @@ function settings.init(sceneGroup, display, native, timer)
             end
 
             -- Music row
-            local musicLabel = display.newText(menuPanelGroup, "Music: " .. (callbacks.getMusicOn() and "On" or "Off"), display.contentCenterX - 20, display.contentCenterY - 120, native.systemFontBold, 25)
+            local musicLabel = display.newText(menuPanelGroup, "Music: " .. (callbacks.getMusicOn() and "On" or "Off"), display.contentCenterX - 60, display.contentCenterY - 130, native.systemFontBold, 22)
             musicLabel:setFillColor(1)
             menuMusicLabel = musicLabel
 
-            local musicBtn = display.newRoundedRect(menuPanelGroup, display.contentCenterX, display.contentCenterY - 150, 240, 55, 8)
+            local musicBtn = display.newRoundedRect(menuPanelGroup, display.contentCenterX, display.contentCenterY - 130, 240, 45, 8)
             musicBtn:setFillColor(0, 0, 0, 0)
             musicBtn:addEventListener("tap", function() toggleMusic(); return true end)
 
-            mtIcon = display.newText(menuPanelGroup, (callbacks.getMusicOn() and "♪" or "⦻"), musicBtn.x + 80, musicBtn.y+20, native.systemFontBold, 40)
+            mtIcon = display.newText(menuPanelGroup, (callbacks.getMusicOn() and "♪" or "⦻"), display.contentCenterX + 70, display.contentCenterY - 130, native.systemFontBold, 35)
             mtIcon:setFillColor(1)
             mtIcon:addEventListener("tap", function() toggleMusic(); return true end)
 
             -- SFX row
-            local sfxLabel = display.newText(menuPanelGroup, "SFX: " .. (callbacks.getSfxOn() and "On" or "Off"), display.contentCenterX - 20, display.contentCenterY - 65, native.systemFontBold, 25)
+            local sfxLabel = display.newText(menuPanelGroup, "SFX: " .. (callbacks.getSfxOn() and "On" or "Off"), display.contentCenterX - 60, display.contentCenterY - 60, native.systemFontBold, 22)
             sfxLabel:setFillColor(1)
             menuSfxLabel = sfxLabel
 
-            local sfxBtn = display.newRoundedRect(menuPanelGroup, display.contentCenterX, display.contentCenterY - 100, 240, 55, 8)
+            local sfxBtn = display.newRoundedRect(menuPanelGroup, display.contentCenterX, display.contentCenterY - 60, 240, 45, 8)
             sfxBtn:setFillColor(0, 0, 0, 0)
             sfxBtn:addEventListener("tap", function() toggleSfx(); return true end)
 
-            stIcon = display.newText(menuPanelGroup, (callbacks.getSfxOn() and "★" or "⦻"), sfxBtn.x + 80, sfxBtn.y + 33, native.systemFontBold, 40)
+            stIcon = display.newText(menuPanelGroup, (callbacks.getSfxOn() and "★" or "⦻"), display.contentCenterX + 70, display.contentCenterY - 60, native.systemFontBold, 35)
             stIcon:setFillColor(1)
             stIcon:addEventListener("tap", function() toggleSfx(); return true end)
 
-            -- Timer row (dropdown)
-            local menuTimerLabelText = (callbacks.getTimerCleared() and "Timer: (cleared)" or ("Timer: " .. tostring(callbacks.getTimerMinutes()) .. " min"))
-            menuTimerLabel = display.newText(menuPanelGroup, menuTimerLabelText, display.contentCenterX - 25, display.contentCenterY - 15, native.systemFontBold, 25)
-            menuTimerLabel:setFillColor(1)
-
-            local timerBtn = display.newRoundedRect(menuPanelGroup, display.contentCenterX, display.contentCenterY +20, 240, 55, 8)
-            timerBtn:setFillColor(0, 0, 0, 0)
-            timerBtn:addEventListener("tap", function() openTimerDropdown(timerBtn); return true end)
-
-            local timerDropdownIcon = display.newText(menuPanelGroup, "▾", timerBtn.x + 80, timerBtn.y - 30, native.systemFontBold, 40)
-            timerDropdownIcon:setFillColor(1)
-            timerDropdownIcon:addEventListener("tap", function() openTimerDropdown(timerBtn); return true end)
-
             -- High Score
-            local hsText = display.newText(menuPanelGroup, "High Score: " .. tostring(callbacks.getHighScore()), display.contentCenterX, display.contentCenterY + 45, native.systemFontBold, 24)
+            local hsText = display.newText(menuPanelGroup, "High Score: " .. tostring(callbacks.getHighScore()), display.contentCenterX, display.contentCenterY + 10, native.systemFontBold, 22)
             hsText:setFillColor(0,1,0)
 
+            -- Home Button
+            local homeBtn = display.newRoundedRect(menuPanelGroup, display.contentCenterX, display.contentCenterY + 80, 200, 40, 10)
+            homeBtn:setFillColor(0.2, 0.4, 0.8)
+            local homeTxt = display.newText(menuPanelGroup, "Home", homeBtn.x, homeBtn.y, native.systemFontBold, 22)
+            homeTxt:setFillColor(1)
+            homeBtn:addEventListener("tap", function() settings.closeMenu(); composer.gotoScene("scene.home", {effect = "fade", time = 500}); return true end)
+
             -- Close Button
-            local closeBtn = display.newRoundedRect(menuPanelGroup, display.contentCenterX, display.contentCenterY + 130, 180, 35, 10)
+            local closeBtn = display.newRoundedRect(menuPanelGroup, display.contentCenterX, display.contentCenterY + 135, 200, 40, 10)
             closeBtn:setFillColor(0, 0.6, 0)
-            local closeTxt = display.newText(menuPanelGroup, "Close", closeBtn.x, closeBtn.y, native.systemFontBold, 24)
+            local closeTxt = display.newText(menuPanelGroup, "Close", closeBtn.x, closeBtn.y, native.systemFontBold, 22)
             closeTxt:setFillColor(1)
             closeBtn:addEventListener("tap", function() settings.closeMenu(); return true end)
         end)

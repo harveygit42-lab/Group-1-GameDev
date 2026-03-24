@@ -41,6 +41,10 @@ local backButton
 local quitButton
 local menuButtonGroup
 local timerText
+
+-- forward-declare restartGame for callback scope
+local restartGame
+local startPlaying
 local startInstructionText
 local startTapListener
 
@@ -234,9 +238,19 @@ local function createCustomButton(label, yPos, color, onTap)
     btnBg:setFillColor(unpack(color))
     btnBg:setStrokeColor(1, 1, 1)
     btnBg.strokeWidth = 4
+    btnBg.isHitTestable = true
     local btnText = display.newText(group, label, btnBg.x, btnBg.y, native.systemFontBold, 30)
     btnText:setFillColor(1, 1, 1)
-    group:addEventListener("tap", onTap)
+
+    local function handleTap(event)
+        if onTap then
+            return onTap(event)
+        end
+        return true
+    end
+
+    btnBg:addEventListener("tap", handleTap)
+    btnText:addEventListener("tap", handleTap)
     return group
 end
 
@@ -312,7 +326,7 @@ local function doGameOver(isTimeUp)
     local sceneGroup = scene.view
     pcall(function()
         screenShadow = display.newRect(sceneGroup, display.contentCenterX, display.contentCenterY, display.actualContentWidth, display.actualContentHeight)
-        screenShadow:setFillColor(0, 0, 0, 0.6)
+        screenShadow:setFillColor(0, 0, 0, 0.85)
         -- overlay is just visual, buttons are inserted after so they remain clickable
         screenShadow.isHitTestable = false
     end)
@@ -329,6 +343,11 @@ local function doGameOver(isTimeUp)
             scoreText = display.newText(sceneGroup, "Score: " .. tostring(tapCount), display.contentCenterX, display.contentCenterY - 20, native.systemFontBold, 50)
             scoreText:setFillColor(1, 1, 1)
         end)
+
+        pcall(function()
+            local highScoreText = display.newText(sceneGroup, "High Score: " .. tostring(highScore), display.contentCenterX, display.contentCenterY - 60, native.systemFontBold, 35)
+            highScoreText:setFillColor(0, 1, 0)
+        end)
     else
         pcall(function()
             gameOverText = display.newText(sceneGroup, "GAME OVER!", display.contentCenterX, display.contentCenterY - 100, native.systemFontBold, 60)
@@ -339,6 +358,11 @@ local function doGameOver(isTimeUp)
             scoreText = display.newText(sceneGroup, "Score: " .. tostring(tapCount), display.contentCenterX, display.contentCenterY + 30, native.systemFontBold, 40)
             scoreText:setFillColor(1, 1, 1)
         end)
+
+        pcall(function()
+            local highScoreText = display.newText(sceneGroup, "High Score: " .. tostring(highScore), display.contentCenterX, display.contentCenterY - 30, native.systemFontBold, 35)
+            highScoreText:setFillColor(0, 1, 0)
+        end)
     end
 
     -- Update high score
@@ -348,12 +372,17 @@ local function doGameOver(isTimeUp)
     end
 
     pcall(function()
-        restartButton = createCustomButton("PLAY AGAIN", display.contentCenterY + 120, {0, 0.6, 0}, restartGame)
-        backButton = createCustomButton("BACK", display.contentCenterY + 200, {0.2, 0.4, 0.8}, function()
+        restartButton = createCustomButton("PLAY AGAIN", display.contentCenterY + 120, {0, 0.6, 0}, function()
+            restartGame()
+            startPlaying()
+            return true
+        end)
+        backButton = createCustomButton("BACK", display.contentCenterY + 230, {0.2, 0.4, 0.8}, function()
             composer.gotoScene("scene.home", {effect = "fade", time = 500})
             return true
         end)
-        quitButton = createCustomButton("QUIT", display.contentCenterY + 280, {0.8, 0, 0}, function() native.requestExit(); return true end)
+        if restartButton then restartButton:toFront() end
+        if backButton then backButton:toFront() end
     end)
 end
 
@@ -383,7 +412,7 @@ local function startCountdown(remaining)
     end, 0)
 end
 
-local function startPlaying()
+startPlaying = function()
     gameStarted = true
     if screenShadow then 
         pcall(function() display.remove(screenShadow) end)
@@ -419,7 +448,7 @@ local function startPlaying()
     return true
 end
 
-local function restartGame()
+restartGame = function()
     if timerHandle then 
         timer.cancel(timerHandle)
         timerHandle = nil 
@@ -483,6 +512,7 @@ local function restartGame()
     -- Show player instruction instead of START/QUIT buttons.
     startInstructionText = display.newText(sceneGroup, "Tap anywhere to start", display.contentCenterX, display.contentCenterY + 100, native.systemFontBold, 30)
     startInstructionText:setFillColor(1, 1, 1)
+    startInstructionText:toFront()
 
     -- capture tap to start game
     if screenShadow then
@@ -630,6 +660,10 @@ end
 
 function scene:show(event)
     if event.phase == "did" then
+        -- Reset game when returning to the scene
+        if gameOver or gameStarted then
+            restartGame()
+        end
         -- Resume music when scene comes back into view
         if musicOn and not gameStarted and not gameOver then
             loadBackgroundMusic()
