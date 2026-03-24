@@ -1,4 +1,4 @@
--- yasmien
+-- yasmien 
 local composer = require("composer")
 local scene = composer.newScene()
 
@@ -38,11 +38,13 @@ function scene:create(event)
 
     local dropdownBtn = display.newRoundedRect(sceneGroup, 0,
         display.contentCenterY - 50, 60, 50, 10)
-    dropdownBtn:setFillColor(0.8, 0.8, 0.8)
+    dropdownBtn:setFillColor(0.2, 0.6, 1) -- FIXED (softer blue)
+    dropdownBtn:setStrokeColor(0, 0, 0)
     dropdownBtn.strokeWidth = 2
 
     local dropdownText = display.newText(sceneGroup, "1",
         dropdownBtn.x, dropdownBtn.y, native.systemFontBold, 20)
+    dropdownText:setFillColor(1, 1, 1) -- white text
 
     local totalWidth = timerLabel.contentWidth + 15 + dropdownBtn.width
     local startX = display.contentCenterX - totalWidth / 2
@@ -75,7 +77,12 @@ function scene:create(event)
             local y = baseY + (i - 1) * 35
 
             local btn = display.newRoundedRect(optionsGroup, dropdownBtn.x, y, 60, 30, 8)
+            btn:setFillColor(0.9, 0.9, 0.9) -- FIXED (light gray)
+            btn:setStrokeColor(0, 0, 0)
+            btn.strokeWidth = 1
+
             local txt = display.newText(optionsGroup, tostring(i), btn.x, btn.y, native.systemFontBold, 18)
+            txt:setFillColor(0, 0, 0) -- black text
 
             btn:addEventListener("tap", function()
                 selectedTimer = i
@@ -88,7 +95,7 @@ function scene:create(event)
     end
 
     -- =====================================================
-    -- DIFFICULTY DROPDOWN (FIXED) hysss
+    -- DIFFICULTY DROPDOWN
     -- =====================================================
 
     local diffLabel = display.newText(sceneGroup, "Level of Difficulty:",
@@ -98,11 +105,13 @@ function scene:create(event)
 
     local diffBtn = display.newRoundedRect(sceneGroup, 0,
         display.contentCenterY + 20, 120, 50, 10)
-    diffBtn:setFillColor(1, 0, 0)
+    diffBtn:setFillColor(1, 0.5, 0.5) -- FIXED (softer red)
+    diffBtn:setStrokeColor(0, 0, 0)
     diffBtn.strokeWidth = 2
 
     local diffText = display.newText(sceneGroup, "None",
         diffBtn.x, diffBtn.y, native.systemFontBold, 18)
+    diffText:setFillColor(1, 1, 1) -- white text
 
     local totalWidth2 = diffLabel.contentWidth + 15 + diffBtn.width
     local startX2 = display.contentCenterX - totalWidth2 / 2
@@ -136,12 +145,29 @@ function scene:create(event)
             local y = baseY + (i - 1) * 40
 
             local btn = display.newRoundedRect(diffOptionsGroup, diffBtn.x, y, 140, 35, 8)
+            btn:setFillColor(0.9, 0.9, 0.9) -- FIXED
+            btn:setStrokeColor(0, 0, 0)
+            btn.strokeWidth = 1
+
             local txt = display.newText(diffOptionsGroup, options[i], btn.x, btn.y, native.systemFontBold, 16)
+            txt:setFillColor(0, 0, 0) -- black text
 
             btn:addEventListener("tap", function()
                 selectedDifficulty = options[i]
                 diffText.text = options[i]
                 diffText.x = diffBtn.x
+
+                -- OPTIONAL color change per difficulty
+                if options[i] == "Easy" then
+                    diffBtn:setFillColor(0, 0.8, 0)
+                elseif options[i] == "Medium" then
+                    diffBtn:setFillColor(1, 0.7, 0)
+                elseif options[i] == "Hard" then
+                    diffBtn:setFillColor(0.8, 0, 0)
+                else
+                    diffBtn:setFillColor(0.6, 0.6, 0.6)
+                end
+
                 closeDiffDropdown()
                 return true
             end)
@@ -158,6 +184,7 @@ function scene:create(event)
 
     local playText = display.newText(sceneGroup, "PLAY",
         playBtn.x, playBtn.y, native.systemFontBold, 30)
+    playText:setFillColor(1,1,1)
 
     local quitBtn = display.newRoundedRect(sceneGroup,
         display.contentCenterX, display.contentCenterY + 200, 200, 60, 15)
@@ -165,6 +192,7 @@ function scene:create(event)
 
     local quitText = display.newText(sceneGroup, "QUIT",
         quitBtn.x, quitBtn.y, native.systemFontBold, 30)
+    quitText:setFillColor(1,1,1)
 
     -- =====================================================
     -- EVENTS
