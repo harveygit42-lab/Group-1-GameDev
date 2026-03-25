@@ -25,18 +25,24 @@ function scene:create(event)
     background.y = display.contentCenterY
 
     -- Title
-    local title = display.newText(sceneGroup, "Tap the Balloon", display.contentCenterX, display.contentCenterY - 150, native.systemFontBold, 50)
-    title:setFillColor(0, 0, 0)
+    local title = display.newImageRect( sceneGroup, "images/gameTitle.png", 380, 170 )
+    title.x = display.contentCenterX
+    title.y = display.contentCenterY - 180
 
     -- Timer Selection
-    local timerText = "Select Timer (minutes):"
-    local timerLabel = display.newText(sceneGroup, timerText, 0, display.contentCenterY - 50, native.systemFontBold, 25)
-    timerLabel:setFillColor(0, 0, 0)
+    local timerLabel = display.newImageRect( sceneGroup, "images/timer.png", 250, 40 )
+    timerLabel.x = display.contentCenterX
+    timerLabel.y = display.contentCenterY - 50
     timerLabel.anchorX = 0
 
+    -- local timerText = "Select Timer (minutes):"
+    -- local timerLabel = display.newText(sceneGroup, timerText, 0, display.contentCenterY - 50, native.systemFontBold, 25)
+    -- timerLabel:setFillColor(0, 0, 0)
+    -- timerLabel.anchorX = 0
+
     -- Dropdown Button
-    local dropdownBtn = display.newRoundedRect(sceneGroup, 0, display.contentCenterY - 50, 60, 50, 10)
-    dropdownBtn:setFillColor(0.8, 0.8, 0.8)
+    local dropdownBtn = display.newRoundedRect(sceneGroup, 0, display.contentCenterY - 50, 60, 30, 10)
+    dropdownBtn:setFillColor(1, 1, 1)
     dropdownBtn.strokeWidth = 2
     dropdownBtn:setStrokeColor(0, 0, 0)
     local dropdownText = display.newText(sceneGroup, selectedTimer, dropdownBtn.x, dropdownBtn.y, native.systemFontBold, 20)
@@ -67,11 +73,11 @@ function scene:create(event)
         optionsGroup = display.newGroup()
         sceneGroup:insert(optionsGroup)
 
-        local baseY = dropdownBtn.y + dropdownBtn.height/2 + 10
+        local baseY = dropdownBtn.y + dropdownBtn.height/2 + 20
         for i = 1, 5 do
-            local y = baseY + (i - 1) * 35
+            local y = baseY + (i - 1) * 40
             local optBtn = display.newRoundedRect(optionsGroup, dropdownBtn.x, y, 60, 30, 8)
-            optBtn:setFillColor(0.9, 0.9, 0.9)
+            optBtn:setFillColor(1, 1, 1)
             optBtn.strokeWidth = 1
             optBtn:setStrokeColor(0, 0, 0)
             local optText = display.newText(optionsGroup, tostring(i), optBtn.x, optBtn.y, native.systemFontBold, 18)
@@ -86,24 +92,21 @@ function scene:create(event)
     end
 
     -- Play Button
-    local playBtn = display.newRoundedRect(sceneGroup, display.contentCenterX, display.contentCenterY + 100, 200, 60, 15)
-    playBtn:setFillColor(0, 0.8, 0)
-    playBtn.strokeWidth = 3
-    playBtn:setStrokeColor(0, 0, 0)
-    local playText = display.newText(sceneGroup, "PLAY", playBtn.x, playBtn.y, native.systemFontBold, 30)
-    playText:setFillColor(1, 1, 1)
+    local playBtn = display.newImageRect( sceneGroup, "images/playBtn.png", 150, 70 )
+    playBtn.x = display.contentCenterX
+    playBtn.y = display.contentCenterY + 50
 
     -- Quit Button
-    local quitBtn = display.newRoundedRect(sceneGroup, display.contentCenterX, display.contentCenterY + 180, 200, 60, 15)
-    quitBtn:setFillColor(0.8, 0, 0)
-    quitBtn.strokeWidth = 3
-    quitBtn:setStrokeColor(0, 0, 0)
-    local quitText = display.newText(sceneGroup, "QUIT", quitBtn.x, quitBtn.y, native.systemFontBold, 30)
-    quitText:setFillColor(1, 1, 1)
+    local quitBtn = display.newImageRect( sceneGroup, "images/exitBtn.png", 150, 70 )
+    quitBtn.x = display.contentCenterX
+    quitBtn.y = display.contentCenterY + 150
 
     -- Info Icon (top right)
-    local infoIcon = display.newText(sceneGroup, "i", display.safeScreenOriginX + display.safeActualContentWidth - 30, display.safeScreenOriginY + 30, native.systemFontBold, 40)
-    infoIcon:setFillColor(0, 0, 0)
+    local infoIcon = display.newImageRect( sceneGroup, "images/iButton.png", 50, 50 )
+    infoIcon.x = 440
+    infoIcon.y = 40
+    -- local infoIcon = display.newText(sceneGroup, "i", display.safeScreenOriginX + display.safeActualContentWidth - 30, display.safeScreenOriginY + 30, native.systemFontBold, 40)
+    -- infoIcon:setFillColor(0, 0, 0)
 
     -- =====================================================
     -- FUNCTIONS
@@ -124,7 +127,7 @@ function scene:create(event)
         creditsBox:setStrokeColor(0, 0, 0)
 
         -- Developer text
-        local creditsText = display.newText(sceneGroup, "Developed by\nYasmien", display.contentCenterX, display.contentCenterY, native.systemFontBold, 30)
+        local creditsText = display.newText(sceneGroup, "Developed by\nYasmien \nIan \nJasmine \nHarvey \nZandra", display.contentCenterX, display.contentCenterY, native.systemFontBold, 20)
         creditsText:setFillColor(0, 0, 0)
 
         -- Exit icon (X)
