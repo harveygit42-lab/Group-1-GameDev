@@ -1,12 +1,13 @@
---yasmien
+-- yasmien 
 local composer = require("composer")
 local scene = composer.newScene()
 
 -- =====================================================
--- GLOBAL VARIABLES
+-- VARIABLES
 -- =====================================================
 
-local selectedTimer = 1  -- Default to 1 minute
+local selectedTimer = 1
+local selectedDifficulty = "None"
 
 -- =====================================================
 -- SCENE CREATE
@@ -14,10 +15,6 @@ local selectedTimer = 1  -- Default to 1 minute
 
 function scene:create(event)
     local sceneGroup = self.view
-
-    -- =====================================================
-    -- DISPLAY OBJECTS
-    -- =====================================================
 
     -- Background
     local background = display.newImageRect(sceneGroup, "images/background.jpg", 480, 800)
@@ -45,17 +42,19 @@ function scene:create(event)
     dropdownBtn:setFillColor(1, 1, 1)
     dropdownBtn.strokeWidth = 2
     dropdownBtn:setStrokeColor(0, 0, 0)
-    local dropdownText = display.newText(sceneGroup, selectedTimer, dropdownBtn.x, dropdownBtn.y, native.systemFontBold, 20)
-    dropdownText:setFillColor(0, 0, 0)
+    dropdownBtn.strokeWidth = 2
 
-    -- Centering both as a group
+    local dropdownText = display.newText(sceneGroup, "1",
+        dropdownBtn.x, dropdownBtn.y, native.systemFontBold, 20)
+    dropdownText:setFillColor(1, 1, 1) -- white text
+
     local totalWidth = timerLabel.contentWidth + 15 + dropdownBtn.width
     local startX = display.contentCenterX - totalWidth / 2
+
     timerLabel.x = startX
     dropdownBtn.x = startX + timerLabel.contentWidth + 15 + dropdownBtn.width/2
     dropdownText.x = dropdownBtn.x
 
-    -- Dropdown Options Group
     local optionsGroup
     local dropdownOpen = false
 
@@ -68,7 +67,8 @@ function scene:create(event)
     end
 
     local function openDropdown()
-        if dropdownOpen then closeDropdown(); return end
+        if dropdownOpen then closeDropdown() return end
+
         dropdownOpen = true
         optionsGroup = display.newGroup()
         sceneGroup:insert(optionsGroup)
@@ -85,6 +85,7 @@ function scene:create(event)
             optBtn:addEventListener("tap", function()
                 selectedTimer = i
                 dropdownText.text = tostring(i)
+                dropdownText.x = dropdownBtn.x
                 closeDropdown()
                 return true
             end)
@@ -109,7 +110,7 @@ function scene:create(event)
     -- infoIcon:setFillColor(0, 0, 0)
 
     -- =====================================================
-    -- FUNCTIONS
+    -- DIFFICULTY DROPDOWN
     -- =====================================================
 
     local function showCredits()
@@ -145,26 +146,54 @@ function scene:create(event)
     end
 
     -- =====================================================
-    -- EVENT LISTENERS
+    -- BUTTONS
     -- =====================================================
 
-    dropdownBtn:addEventListener("tap", function() openDropdown(); return true end)
+    local playBtn = display.newRoundedRect(sceneGroup,
+        display.contentCenterX, display.contentCenterY + 120, 200, 60, 15)
+    playBtn:setFillColor(0, 0.8, 0)
+
+    local playText = display.newText(sceneGroup, "PLAY",
+        playBtn.x, playBtn.y, native.systemFontBold, 30)
+    playText:setFillColor(1,1,1)
+
+    local quitBtn = display.newRoundedRect(sceneGroup,
+        display.contentCenterX, display.contentCenterY + 200, 200, 60, 15)
+    quitBtn:setFillColor(0.8, 0, 0)
+
+    local quitText = display.newText(sceneGroup, "QUIT",
+        quitBtn.x, quitBtn.y, native.systemFontBold, 30)
+    quitText:setFillColor(1,1,1)
+
+    -- =====================================================
+    -- EVENTS
+    -- =====================================================
+
+    dropdownBtn:addEventListener("tap", function()
+        closeDiffDropdown()
+        openDropdown()
+        return true
+    end)
+
+    diffBtn:addEventListener("tap", function()
+        closeDropdown()
+        openDiffDropdown()
+        return true
+    end)
 
     playBtn:addEventListener("tap", function()
-        closeDropdown()  -- Ensure dropdown is closed
+        closeDropdown()
+        closeDiffDropdown()
+
         composer.setVariable("timerMinutes", selectedTimer)
+        composer.setVariable("difficulty", selectedDifficulty)
+
         composer.gotoScene("scene.menu", {effect = "fade", time = 500})
         return true
     end)
 
     quitBtn:addEventListener("tap", function()
-        closeDropdown()  -- Ensure dropdown is closed
         native.requestExit()
-        return true
-    end)
-
-    infoIcon:addEventListener("tap", function()
-        showCredits()
         return true
     end)
 end
