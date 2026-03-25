@@ -37,10 +37,16 @@ local gameOverText
 local timeUpText
 local scoreText
 local highScoreText
+local scoreBadge
+local scoreLabel
+local totalWidth
+local highScoreLabel
+local highScoreBadge
 local restartButton
 local backButton
 local quitButton
 local menuButtonGroup
+local gameOverGroup
 local timerText
 
 -- forward-declare restartGame for callback scope
@@ -276,6 +282,41 @@ local function createMenuIcon(x, y)
     return group
 end
 
+local function clearGameOverOverlay()
+    if gameOverGroup then
+        pcall(function() display.remove(gameOverGroup) end)
+        gameOverGroup = nil
+    end
+
+    local labels = {
+        highScoreLabel, highScoreBadge, highScoreText,
+        scoreLabel, scoreBadge, scoreText,
+        timeUpText, gameOverText, restartButton,
+        backButton, quitButton, screenShadow
+    }
+
+    for i = 1, #labels do
+        if labels[i] then
+            pcall(function() display.remove(labels[i]) end)
+            labels[i] = nil
+        end
+    end
+
+    -- Explicitly clear references to avoid ghosting
+    highScoreLabel = nil
+    highScoreBadge = nil
+    highScoreText = nil
+    scoreLabel = nil
+    scoreBadge = nil
+    scoreText = nil
+    timeUpText = nil
+    gameOverText = nil
+    restartButton = nil
+    backButton = nil
+    quitButton = nil
+    screenShadow = nil
+end
+
 local function initializeGame()
     local sceneGroup = scene.view
     pcall(function()
@@ -315,6 +356,9 @@ local function doGameOver(isTimeUp)
         timer.cancel(timerHandle)
         timerHandle = nil 
     end
+
+    clearGameOverOverlay()
+
     gameOver = true
     physics.pause()
 
@@ -325,10 +369,16 @@ local function doGameOver(isTimeUp)
     end
 
     local sceneGroup = scene.view
+
+    -- put all game over overlays inside a dedicated group for easier cleanup
+    clearGameOverOverlay()
+    gameOverGroup = display.newGroup()
+    sceneGroup:insert(gameOverGroup)
+
     pcall(function()
-        screenShadow = display.newRect(sceneGroup, display.contentCenterX, display.contentCenterY, display.actualContentWidth, display.actualContentHeight)
+        screenShadow = display.newRect(gameOverGroup, display.contentCenterX, display.contentCenterY, display.actualContentWidth, display.actualContentHeight)
         screenShadow:setFillColor(0, 0, 0, 0.85)
-        -- overlay is just visual, buttons are inserted after so they remain clickable
+        -- overlay is visual; buttons remain clickable
         screenShadow.isHitTestable = false
     end)
 
@@ -336,33 +386,81 @@ local function doGameOver(isTimeUp)
 
     if isTimeUp then
         pcall(function()
-            timeUpText = display.newText(sceneGroup, "TIME IS UP!", display.contentCenterX, display.contentCenterY - 120, native.systemFontBold, 60)
-            timeUpText:setFillColor(1, 1, 0)
+            timeUpText = display.newImageRect( gameOverGroup, "images/timesUp.png", 350, 40 )
+            timeUpText.x = display.contentCenterX
+            timeUpText.y = display.contentCenterY - 120
         end)
 
         pcall(function()
-            scoreText = display.newText(sceneGroup, "Score: " .. tostring(tapCount), display.contentCenterX, display.contentCenterY - 20, native.systemFontBold, 50)
-            scoreText:setFillColor(1, 1, 1)
+            scoreBadge = display.newImageRect(gameOverGroup, "images/score.png", 200, 30)
+            scoreBadge.x = display.contentCenterX
+            scoreBadge.y = display.contentCenterY + 30
+
+            scoreLabel = display.newText(gameOverGroup, "" .. tostring(tapCount), display.contentCenterX, display.contentCenterY + 30, native.systemFontBold, 40)
+            scoreLabel:setFillColor(1, 1, 1)
+
+            -- Align badge and value as a centered row
+            totalWidth = scoreBadge.contentWidth + 10 + scoreLabel.contentWidth
+            scoreBadge.x = display.contentCenterX - totalWidth/2 + scoreBadge.contentWidth/2
+            scoreLabel.x = display.contentCenterX + totalWidth/2 - scoreLabel.contentWidth/2
+
+            -- scoreText = display.newText(gameOverGroup, "Score: " .. tostring(tapCount), display.contentCenterX, display.contentCenterY - 20, native.systemFontBold, 50)
+            -- scoreText:setFillColor(1, 1, 1)
         end)
 
         pcall(function()
-            highScoreText = display.newText(sceneGroup, "High Score: " .. tostring(highScore), display.contentCenterX, display.contentCenterY - 60, native.systemFontBold, 35)
-            highScoreText:setFillColor(0, 1, 0)
+           highScoreBadge = display.newImageRect(gameOverGroup, "images/highScore.png", 200, 15)
+            highScoreBadge.x = display.contentCenterX
+            highScoreBadge.y = display.contentCenterY - 40
+
+            highScoreLabel = display.newText(sceneGroup, "" .. tostring(highScore), display.contentCenterX, display.contentCenterY - 40, native.systemFontBold, 28)
+            highScoreLabel:setFillColor(133/255, 204/255, 23/255)
+
+            -- Align badge and value as a centered row
+            totalWidth = highScoreBadge.contentWidth + 10 + highScoreLabel.contentWidth
+            highScoreBadge.x = display.contentCenterX - totalWidth/2 + highScoreBadge.contentWidth/2
+            highScoreLabel.x = display.contentCenterX + totalWidth/2 - highScoreLabel.contentWidth/2
         end)
     else
         pcall(function()
-            gameOverText = display.newText(sceneGroup, "GAME OVER!", display.contentCenterX, display.contentCenterY - 100, native.systemFontBold, 60)
-            gameOverText:setFillColor(1, 0, 0)
+
+            gameOverText = display.newImageRect( gameOverGroup, "images/gameOver.png", 400, 50 )
+            gameOverText.x = display.contentCenterX
+            gameOverText.y = display.contentCenterY - 120
+            -- gameOverText = display.newText(sceneGroup, "GAME OVER!", display.contentCenterX, display.contentCenterY - 100, native.systemFontBold, 60)
+            -- gameOverText:setFillColor(1, 0, 0)
         end)
 
         pcall(function()
-            scoreText = display.newText(sceneGroup, "Score: " .. tostring(tapCount), display.contentCenterX, display.contentCenterY + 30, native.systemFontBold, 40)
-            scoreText:setFillColor(1, 1, 1)
+
+            scoreBadge = display.newImageRect(gameOverGroup, "images/score.png", 200, 30)
+            scoreBadge.x = display.contentCenterX
+            scoreBadge.y = display.contentCenterY + 30
+
+            scoreLabel = display.newText(gameOverGroup, "" .. tostring(tapCount), display.contentCenterX, display.contentCenterY + 30, native.systemFontBold, 40)
+            scoreLabel:setFillColor(1, 1, 1)
+
+            -- Align badge and value as a centered row
+            totalWidth = scoreBadge.contentWidth + 10 + scoreLabel.contentWidth
+            scoreBadge.x = display.contentCenterX - totalWidth/2 + scoreBadge.contentWidth/2
+            scoreLabel.x = display.contentCenterX + totalWidth/2 - scoreLabel.contentWidth/2
+
+            -- scoreText = display.newText(sceneGroup, "Score: " .. tostring(tapCount), display.contentCenterX, display.contentCenterY + 30, native.systemFontBold, 40)
+            -- scoreText:setFillColor(1, 1, 1)
         end)
 
         pcall(function()
-            highScoreText = display.newText(sceneGroup, "High Score: " .. tostring(highScore), display.contentCenterX, display.contentCenterY - 30, native.systemFontBold, 35)
-            highScoreText:setFillColor(0, 1, 0)
+            highScoreBadge = display.newImageRect(gameOverGroup, "images/highScore.png", 200, 15)
+            highScoreBadge.x = display.contentCenterX
+            highScoreBadge.y = display.contentCenterY - 40
+
+            highScoreLabel = display.newText(sceneGroup, "" .. tostring(highScore), display.contentCenterX, display.contentCenterY - 40, native.systemFontBold, 28)
+            highScoreLabel:setFillColor(133/255, 204/255, 23/255)
+
+            -- Align badge and value as a centered row
+            totalWidth = highScoreBadge.contentWidth + 10 + highScoreLabel.contentWidth
+            highScoreBadge.x = display.contentCenterX - totalWidth/2 + highScoreBadge.contentWidth/2
+            highScoreLabel.x = display.contentCenterX + totalWidth/2 - highScoreLabel.contentWidth/2
         end)
     end
 
@@ -373,15 +471,25 @@ local function doGameOver(isTimeUp)
     end
 
     pcall(function()
-        restartButton = createCustomButton("PLAY AGAIN", display.contentCenterY + 120, {0, 0.6, 0}, function()
+        restartButton = display.newImageRect(gameOverGroup, "images/playagainBtn.png", 230, 70)
+        restartButton.x = display.contentCenterX
+        restartButton.y = display.contentCenterY + 150
+        restartButton.isHitTestable = true
+        restartButton:addEventListener("tap", function()
             restartGame()
             startPlaying()
             return true
         end)
-        backButton = createCustomButton("BACK", display.contentCenterY + 230, {0.2, 0.4, 0.8}, function()
+
+        backButton = display.newImageRect(gameOverGroup, "images/backBtn.png", 230, 70)
+        backButton.x = display.contentCenterX
+        backButton.y = display.contentCenterY + 250
+        backButton.isHitTestable = true
+        backButton:addEventListener("tap", function()
             composer.gotoScene("scene.home", {effect = "fade", time = 500})
             return true
         end)
+
         if restartButton then restartButton:toFront() end
         if backButton then backButton:toFront() end
     end)
@@ -418,6 +526,10 @@ end
 
 startPlaying = function()
     gameStarted = true
+
+    -- extra safety cleanup before starting play
+    clearGameOverOverlay()
+
     if screenShadow then 
         pcall(function() display.remove(screenShadow) end)
         screenShadow = nil 
@@ -457,6 +569,7 @@ restartGame = function()
         timer.cancel(timerHandle)
         timerHandle = nil 
     end
+
     if timerText then 
         pcall(function() display.remove(timerText) end)
         timerText = nil 
@@ -465,36 +578,8 @@ restartGame = function()
         pcall(function() display.remove(screenShadow) end)
         screenShadow = nil 
     end
-    if gameOverText then 
-        pcall(function() display.remove(gameOverText) end)
-        gameOverText = nil 
-    end
-    if timeUpText then 
-        pcall(function() display.remove(timeUpText) end)
-        timeUpText = nil 
-    end
-    if scoreText then 
-        pcall(function() display.remove(scoreText) end)
-        scoreText = nil 
-    end
 
-    if highScoreText then 
-        pcall(function() display.remove(highScoreText) end)
-        highScoreText = nil 
-    end
-    
-    if restartButton then 
-        pcall(function() display.remove(restartButton) end)
-        restartButton = nil 
-    end
-    if backButton then
-        pcall(function() display.remove(backButton) end)
-        backButton = nil
-    end
-    if quitButton then 
-        pcall(function() display.remove(quitButton) end)
-        quitButton = nil 
-    end
+    clearGameOverOverlay()
 
     gameOver = false
     gameStarted = false
@@ -582,8 +667,13 @@ function scene:create(event)
     -- Override timer if passed from home (via composer variable)
     local composerTimer = composer.getVariable("timerMinutes")
     if composerTimer then
-        timerMinutes = math.max(1, math.min(tonumber(composerTimer) or 1, 5))
-        saveTimerSetting(timerMinutes)
+        if composerTimer == "None" then
+            timerCleared = true
+        else
+            timerMinutes = math.max(1, math.min(tonumber(composerTimer) or 1, 5))
+            timerCleared = false
+            saveTimerSetting(timerMinutes)
+        end
         composer.setVariable("timerMinutes", nil)  -- Clear it
     elseif event.params and event.params.timeLimit then
         local timerValue = tonumber(event.params.timeLimit)
@@ -647,6 +737,7 @@ function scene:create(event)
     --Menu initial
     menuButtonGroup = createMenuIcon(40, 40)
     menuButtonGroup:addEventListener("tap", function()
+        clearGameOverOverlay()
         settingsModule.showMenu()
         return true
     end)
@@ -681,8 +772,13 @@ function scene:show(event)
         -- Check for timer selection from home (via composer variable)
         local composerTimer = composer.getVariable("timerMinutes")
         if composerTimer then
-            timerMinutes = math.max(1, math.min(tonumber(composerTimer) or 1, 5))
-            saveTimerSetting(timerMinutes)
+            if composerTimer == "None" then
+                timerCleared = true
+            else
+                timerMinutes = math.max(1, math.min(tonumber(composerTimer) or 1, 5))
+                timerCleared = false
+                saveTimerSetting(timerMinutes)
+            end
             composer.setVariable("timerMinutes", nil)  -- Clear it
         elseif event.params and event.params.timeLimit then
             local timerValue = tonumber(event.params.timeLimit)

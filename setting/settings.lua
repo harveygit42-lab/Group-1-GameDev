@@ -244,47 +244,49 @@ function settings.init(sceneGroup, display, native, timer)
 
             -- Music row
             local musicLabel = display.newText(menuPanelGroup, "Music: " .. (callbacks.getMusicOn() and "On" or "Off"), display.contentCenterX - 60, display.contentCenterY - 130, native.systemFontBold, 22)
-            musicLabel:setFillColor(1)
+            musicLabel:setFillColor(1, 0.96, 0.24)
             menuMusicLabel = musicLabel
+            musicLabel.anchorX = 0
 
-            local musicBtn = display.newRoundedRect(menuPanelGroup, display.contentCenterX, display.contentCenterY - 130, 240, 45, 8)
+            local musicBtn = display.newRoundedRect(menuPanelGroup, display.contentCenterX, display.contentCenterY - 100, 240, 45, 8)
             musicBtn:setFillColor(0, 0, 0, 0)
             musicBtn:addEventListener("tap", function() toggleMusic(); return true end)
 
             mtIcon = display.newText(menuPanelGroup, (callbacks.getMusicOn() and "♪" or "⦻"), display.contentCenterX + 70, display.contentCenterY - 130, native.systemFontBold, 35)
-            mtIcon:setFillColor(1)
+            mtIcon:setFillColor(1, 0.96, 0.24)
             mtIcon:addEventListener("tap", function() toggleMusic(); return true end)
 
             -- SFX row
-            local sfxLabel = display.newText(menuPanelGroup, "SFX: " .. (callbacks.getSfxOn() and "On" or "Off"), display.contentCenterX - 60, display.contentCenterY - 60, native.systemFontBold, 22)
-            sfxLabel:setFillColor(1)
+            local sfxLabel = display.newText(menuPanelGroup, "SFX: " .. (callbacks.getSfxOn() and "On" or "Off"), display.contentCenterX - 60, display.contentCenterY - 90, native.systemFontBold, 22)
+            sfxLabel:setFillColor(1, 0.96, 0.24)
             menuSfxLabel = sfxLabel
+            sfxLabel.anchorX = 0
 
-            local sfxBtn = display.newRoundedRect(menuPanelGroup, display.contentCenterX, display.contentCenterY - 60, 240, 45, 8)
+            local sfxBtn = display.newRoundedRect(menuPanelGroup, display.contentCenterX, display.contentCenterY - 50, 240, 45, 8)
             sfxBtn:setFillColor(0, 0, 0, 0)
             sfxBtn:addEventListener("tap", function() toggleSfx(); return true end)
 
-            stIcon = display.newText(menuPanelGroup, (callbacks.getSfxOn() and "★" or "⦻"), display.contentCenterX + 70, display.contentCenterY - 60, native.systemFontBold, 35)
-            stIcon:setFillColor(1)
+            stIcon = display.newText(menuPanelGroup, (callbacks.getSfxOn() and "★" or "⦻"), display.contentCenterX + 70, display.contentCenterY - 90, native.systemFontBold, 35)
+            stIcon:setFillColor(1, 0.96, 0.24)
             stIcon:addEventListener("tap", function() toggleSfx(); return true end)
 
             -- High Score
-            local hsText = display.newText(menuPanelGroup, "High Score: " .. tostring(callbacks.getHighScore()), display.contentCenterX, display.contentCenterY + 10, native.systemFontBold, 22)
+            local hsText = display.newText(menuPanelGroup, "High Score: " .. tostring(callbacks.getHighScore()), display.contentCenterX, display.contentCenterY - 30, native.systemFontBold, 22)
             hsText:setFillColor(0,1,0)
 
+            -- Close Button
+            local closeBtn = display.newImageRect( menuPanelGroup, "images/continueBtn.png", 150, 60 )
+            closeBtn.x = display.contentCenterX
+            closeBtn.y = display.contentCenterY + 40
+            closeBtn:addEventListener("tap", function() settings.closeMenu(); return true end)
+
             -- Home Button
-            local homeBtn = display.newRoundedRect(menuPanelGroup, display.contentCenterX, display.contentCenterY + 80, 200, 40, 10)
-            homeBtn:setFillColor(0.2, 0.4, 0.8)
-            local homeTxt = display.newText(menuPanelGroup, "Home", homeBtn.x, homeBtn.y, native.systemFontBold, 22)
-            homeTxt:setFillColor(1)
+            local homeBtn = display.newImageRect( menuPanelGroup, "images/homeBtn.png", 150, 60 )
+            homeBtn.x = display.contentCenterX
+            homeBtn.y = display.contentCenterY + 120
             homeBtn:addEventListener("tap", function() settings.closeMenu(); composer.gotoScene("scene.home", {effect = "fade", time = 500}); return true end)
 
-            -- Close Button
-            local closeBtn = display.newRoundedRect(menuPanelGroup, display.contentCenterX, display.contentCenterY + 135, 200, 40, 10)
-            closeBtn:setFillColor(0, 0.6, 0)
-            local closeTxt = display.newText(menuPanelGroup, "Close", closeBtn.x, closeBtn.y, native.systemFontBold, 22)
-            closeTxt:setFillColor(1)
-            closeBtn:addEventListener("tap", function() settings.closeMenu(); return true end)
+            
         end)
     end
 
