@@ -10,7 +10,6 @@ local selectedTimer = "None"
 local selectedDifficulty = "None"
 local myFont = "PressStart2P" 
 
-
 -- =====================================================
 -- SCENE CREATE
 -- =====================================================
