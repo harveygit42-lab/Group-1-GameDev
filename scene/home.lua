@@ -1,4 +1,3 @@
--- yasmien 
 local composer = require("composer")
 local scene = composer.newScene()
 
@@ -8,6 +7,7 @@ local scene = composer.newScene()
 
 local selectedTimer = "None"
 local selectedDifficulty = "None"
+local myFont = "PressStart2P" 
 
 -- =====================================================
 -- SCENE CREATE
@@ -31,15 +31,15 @@ function scene:create(event)
     title.y = display.contentCenterY - 180
 
     -- Timer Selection
-    local timerLabel = display.newImageRect( sceneGroup, "images/timer.png", 300, 40 )
-    timerLabel.x = display.contentCenterX
-    timerLabel.y = display.contentCenterY - 50
-    timerLabel.anchorX = 0
-
-    -- local timerText = "Select Timer (minutes):"
-    -- local timerLabel = display.newText(sceneGroup, timerText, 0, display.contentCenterY - 50, native.systemFontBold, 25)
-    -- timerLabel:setFillColor(0, 0, 0)
+    -- local timerLabel = display.newImageRect( sceneGroup, "images/timer.png", 250, 20 )
+    -- timerLabel.x = display.contentCenterX
+    -- timerLabel.y = display.contentCenterY - 50
     -- timerLabel.anchorX = 0
+
+    local timerText = "Select Timer (minutes):"
+    local timerLabel = display.newText(sceneGroup, timerText, 0, display.contentCenterY - 50, myFont, 14)
+    timerLabel:setFillColor(1, 1, 1)
+    timerLabel.anchorX = 0
 
     -- Dropdown Button
     local dropdownBtn = display.newRoundedRect(sceneGroup, 0, display.contentCenterY - 50, 60, 30, 10)
@@ -48,7 +48,7 @@ function scene:create(event)
     
 
     local dropdownText = display.newText(sceneGroup, "None",
-        dropdownBtn.x, dropdownBtn.y, native.systemFontBold, 20)
+        dropdownBtn.x, dropdownBtn.y, myFont, 12)
     dropdownText:setFillColor(0, 0, 0)
 
     local totalWidth = timerLabel.contentWidth + 15 + dropdownBtn.width
@@ -82,9 +82,9 @@ function scene:create(event)
             local y = baseY + (i - 1) * 40
             local optBtn = display.newRoundedRect(optionsGroup, dropdownBtn.x, y, 60, 30, 8)
             optBtn:setFillColor(1, 1, 1)
-            optBtn.strokeWidth = 1
+            -- optBtn.strokeWidth = 1
             optBtn:setStrokeColor(0, 0, 0)
-            local optText = display.newText(optionsGroup, timerOptions[i], optBtn.x, optBtn.y, native.systemFontBold, 18)
+            local optText = display.newText(optionsGroup, timerOptions[i], optBtn.x, optBtn.y, myFont, 12)
             optText:setFillColor(0, 0, 0)
             optBtn:addEventListener("tap", function()
                 selectedTimer = timerOptions[i]
@@ -99,19 +99,19 @@ function scene:create(event)
 
 
     -- Play Button
-    local playBtn = display.newImageRect( sceneGroup, "images/playBtn.png", 150, 70 )
+    local playBtn = display.newImageRect( sceneGroup, "images/playBtn.png", 150, 60 )
     playBtn.x = display.contentCenterX
-    playBtn.y = display.contentCenterY + 150
+    playBtn.y = display.contentCenterY + 170
 
     -- Quit Button
-    local quitBtn = display.newImageRect( sceneGroup, "images/exitBtn.png", 150, 70 )
+    local quitBtn = display.newImageRect( sceneGroup, "images/exitBtn.png", 150, 60 )
     quitBtn.x = display.contentCenterX
     quitBtn.y = display.contentCenterY + 250
 
     local showCredits
 
     -- Info Icon (top right)
-    local infoIcon = display.newImageRect( sceneGroup, "images/iButton.png", 50, 50 )
+    local infoIcon = display.newImageRect( sceneGroup, "images/iButton.png", 40, 40 )
     infoIcon.x = 440
     infoIcon.y = 40
     -- local infoIcon = display.newText(sceneGroup, "i", display.safeScreenOriginX + display.safeActualContentWidth - 30, display.safeScreenOriginY + 30, native.systemFontBold, 40)

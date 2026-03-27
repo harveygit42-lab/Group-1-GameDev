@@ -1,4 +1,3 @@
---yasmien
 local composer = require("composer")
 local scene = composer.newScene()
 local physics = require("physics")
@@ -24,6 +23,7 @@ local timerCleared = false
 local highScore = 0
 local musicOn = true
 local sfxOn = true
+local myFont = "PressStart2P"
 
 -- Display objects
 local background
@@ -214,7 +214,7 @@ local function updateTimerDisplay()
         return
     end
     if not timerText then
-        timerText = display.newText(scene.view, "", display.contentCenterX, 120, native.systemFontBold, 28)
+        timerText = display.newText(scene.view, "", display.contentCenterX, 120, myFont, 28)
         timerText:setFillColor(1)
     end
     local m = math.floor(math.max(timerSeconds, 0) / 60)
@@ -246,7 +246,7 @@ local function createCustomButton(label, yPos, color, onTap)
     btnBg:setStrokeColor(1, 1, 1)
     btnBg.strokeWidth = 4
     btnBg.isHitTestable = true
-    local btnText = display.newText(group, label, btnBg.x, btnBg.y, native.systemFontBold, 30)
+    local btnText = display.newText(group, label, btnBg.x, btnBg.y, myFont, 30)
     btnText:setFillColor(1, 1, 1)
 
     local function handleTap(event)
@@ -266,17 +266,17 @@ local function createMenuIcon(x, y)
     scene.view:insert(group)
     local size = 40
     local bg = display.newRect(group, x, y, size, size)
-    bg:setFillColor(0, 0, 0, 0.4)
-    bg.strokeWidth = 2
-    bg:setStrokeColor(1, 1, 1)
+    bg:setFillColor(0, 0, 0, 0)
+    -- bg.strokeWidth = 2
+    -- bg:setStrokeColor(1, 1, 1)
     local icon
     local ok = pcall(function()
-        icon = display.newImageRect(group, "images/menu.png", 34, 34)
+        icon = display.newImageRect(group, "images/settings.png", 40, 40)
         icon.x = x
         icon.y = y
     end)
     if not ok then
-        local txt = display.newText(group, "≡", x, y, native.systemFontBold, 25)
+        local txt = display.newText(group, "≡", x, y, myFont, 25)
         txt:setFillColor(1)
     end
     return group
@@ -334,7 +334,7 @@ local function initializeGame()
     end)
 
     pcall(function()
-        tapText = display.newText(sceneGroup, tapCount, display.contentCenterX, 60, native.systemFont, 100)
+        tapText = display.newText(sceneGroup, tapCount, display.contentCenterX, 60, myFont, 60)
         tapText:setFillColor(0, 1, 0)
     end)
 
@@ -386,81 +386,34 @@ local function doGameOver(isTimeUp)
 
     if isTimeUp then
         pcall(function()
-            timeUpText = display.newImageRect( gameOverGroup, "images/timesUp.png", 350, 40 )
-            timeUpText.x = display.contentCenterX
-            timeUpText.y = display.contentCenterY - 120
+            timeUpText = display.newText(sceneGroup, "TIME IS UP!", display.contentCenterX, display.contentCenterY - 100, myFont, 40)
+            timeUpText:setFillColor(1, 1, 0)
         end)
 
         pcall(function()
-            scoreBadge = display.newImageRect(gameOverGroup, "images/score.png", 200, 30)
-            scoreBadge.x = display.contentCenterX
-            scoreBadge.y = display.contentCenterY + 30
-
-            scoreLabel = display.newText(gameOverGroup, "" .. tostring(tapCount), display.contentCenterX, display.contentCenterY + 30, native.systemFontBold, 40)
-            scoreLabel:setFillColor(1, 1, 1)
-
-            -- Align badge and value as a centered row
-            totalWidth = scoreBadge.contentWidth + 10 + scoreLabel.contentWidth
-            scoreBadge.x = display.contentCenterX - totalWidth/2 + scoreBadge.contentWidth/2
-            scoreLabel.x = display.contentCenterX + totalWidth/2 - scoreLabel.contentWidth/2
-
-            -- scoreText = display.newText(gameOverGroup, "Score: " .. tostring(tapCount), display.contentCenterX, display.contentCenterY - 20, native.systemFontBold, 50)
-            -- scoreText:setFillColor(1, 1, 1)
+            highScoreText = display.newText(gameOverGroup, "Highest Score: " .. tostring(highScore), display.contentCenterX, display.contentCenterY - 30, myFont, 18)
+            highScoreText:setFillColor(133/255, 204/255, 23/255)
         end)
 
         pcall(function()
-           highScoreBadge = display.newImageRect(gameOverGroup, "images/highScore.png", 200, 15)
-            highScoreBadge.x = display.contentCenterX
-            highScoreBadge.y = display.contentCenterY - 40
-
-            highScoreLabel = display.newText(sceneGroup, "" .. tostring(highScore), display.contentCenterX, display.contentCenterY - 40, native.systemFontBold, 28)
-            highScoreLabel:setFillColor(133/255, 204/255, 23/255)
-
-            -- Align badge and value as a centered row
-            totalWidth = highScoreBadge.contentWidth + 10 + highScoreLabel.contentWidth
-            highScoreBadge.x = display.contentCenterX - totalWidth/2 + highScoreBadge.contentWidth/2
-            highScoreLabel.x = display.contentCenterX + totalWidth/2 - highScoreLabel.contentWidth/2
+            scoreText = display.newText(gameOverGroup, "Score: " .. tostring(tapCount), display.contentCenterX, display.contentCenterY + 45, myFont, 33)
+            scoreText:setFillColor(1, 1, 1)
         end)
     else
         pcall(function()
-
-            gameOverText = display.newImageRect( gameOverGroup, "images/gameOver.png", 400, 50 )
-            gameOverText.x = display.contentCenterX
-            gameOverText.y = display.contentCenterY - 120
-            -- gameOverText = display.newText(sceneGroup, "GAME OVER!", display.contentCenterX, display.contentCenterY - 100, native.systemFontBold, 60)
-            -- gameOverText:setFillColor(1, 0, 0)
+            gameOverText = display.newText(sceneGroup, "GAME OVER!", display.contentCenterX, display.contentCenterY - 100, myFont, 40)
+            gameOverText:setFillColor(1, 0, 0)
         end)
 
         pcall(function()
-
-            scoreBadge = display.newImageRect(gameOverGroup, "images/score.png", 200, 30)
-            scoreBadge.x = display.contentCenterX
-            scoreBadge.y = display.contentCenterY + 30
-
-            scoreLabel = display.newText(gameOverGroup, "" .. tostring(tapCount), display.contentCenterX, display.contentCenterY + 30, native.systemFontBold, 40)
-            scoreLabel:setFillColor(1, 1, 1)
-
-            -- Align badge and value as a centered row
-            totalWidth = scoreBadge.contentWidth + 10 + scoreLabel.contentWidth
-            scoreBadge.x = display.contentCenterX - totalWidth/2 + scoreBadge.contentWidth/2
-            scoreLabel.x = display.contentCenterX + totalWidth/2 - scoreLabel.contentWidth/2
-
-            -- scoreText = display.newText(sceneGroup, "Score: " .. tostring(tapCount), display.contentCenterX, display.contentCenterY + 30, native.systemFontBold, 40)
-            -- scoreText:setFillColor(1, 1, 1)
+            highScoreText = display.newText(gameOverGroup, "Highest Score: " .. tostring(highScore), display.contentCenterX, display.contentCenterY - 30, myFont, 18)
+            highScoreText:setFillColor(133/255, 204/255, 23/255)
+            
         end)
 
         pcall(function()
-            highScoreBadge = display.newImageRect(gameOverGroup, "images/highScore.png", 200, 15)
-            highScoreBadge.x = display.contentCenterX
-            highScoreBadge.y = display.contentCenterY - 40
-
-            highScoreLabel = display.newText(sceneGroup, "" .. tostring(highScore), display.contentCenterX, display.contentCenterY - 40, native.systemFontBold, 28)
-            highScoreLabel:setFillColor(133/255, 204/255, 23/255)
-
-            -- Align badge and value as a centered row
-            totalWidth = highScoreBadge.contentWidth + 10 + highScoreLabel.contentWidth
-            highScoreBadge.x = display.contentCenterX - totalWidth/2 + highScoreBadge.contentWidth/2
-            highScoreLabel.x = display.contentCenterX + totalWidth/2 - highScoreLabel.contentWidth/2
+            scoreText = display.newText(sceneGroup, "Score: " .. tostring(tapCount), display.contentCenterX, display.contentCenterY + 45, myFont, 33)
+            scoreText:setFillColor(1, 1, 1)
         end)
     end
 
@@ -493,6 +446,9 @@ local function doGameOver(isTimeUp)
         if restartButton then restartButton:toFront() end
         if backButton then backButton:toFront() end
     end)
+
+    
+
 end
 
 local function startCountdown(remaining)
@@ -605,7 +561,7 @@ restartGame = function()
     if menuButtonGroup then sceneGroup:insert(menuButtonGroup) end
 
     -- Show player instruction instead of START/QUIT buttons.
-    startInstructionText = display.newText(sceneGroup, "Tap anywhere to start", display.contentCenterX, display.contentCenterY + 100, native.systemFontBold, 30)
+    startInstructionText = display.newText(sceneGroup, "Tap anywhere to start", display.contentCenterX, display.contentCenterY + 100, myFont, 20)
     startInstructionText:setFillColor(1, 1, 1)
     startInstructionText:toFront()
 
@@ -657,7 +613,7 @@ end
 
 function scene:create(event)
     local sceneGroup = self.view
-
+    
     -- Load all settings
     highScore = loadHighScore()
     musicOn = loadMusicSetting()
@@ -737,8 +693,21 @@ function scene:create(event)
     --Menu initial
     menuButtonGroup = createMenuIcon(40, 40)
     menuButtonGroup:addEventListener("tap", function()
-        clearGameOverOverlay()
-        settingsModule.showMenu()
+        physics.pause()
+    
+    -- 2. Call showMenu and provide a callback for when it closes
+    settingsModule.showMenu({
+        onClose = function()
+            -- This code runs when the user closes the settings menu
+            if not gameStarted and not gameOver then
+                -- Re-run restartGame to restore the shadow and tap listener
+                restartGame()
+            elseif gameStarted and not gameOver then
+                -- If they were mid-game, just resume physics
+                physics.start()
+            end
+        end
+    })
         return true
     end)
 
