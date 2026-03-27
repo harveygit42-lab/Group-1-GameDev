@@ -11,23 +11,35 @@ local physics = require("physics")
 local difficultyConfig = {
     None = {
         count = 0,
+        initialDelay = 0,           -- ms before first spawn
         spawnInterval = 10000,      -- irrelevant
         displayDuration = 5000,     -- irrelevant
+        minSpeed = 150,
+        maxSpeed = 150,
     },
     Easy = {
         count = 1,
-        spawnInterval = 10000,      -- 10 seconds
-        displayDuration = 5000,     -- 5 seconds
+        initialDelay = 5000,        -- 5 seconds delay
+        spawnInterval = 5000,      -- 5 seconds
+        displayDuration = 10000,    -- 10 seconds
+        minSpeed = 60,              -- slower
+        maxSpeed = 120,
     },
     Medium = {
         count = 2,
-        spawnInterval = 10000,      -- 10 seconds
-        displayDuration = 10000,    -- 10 seconds
+        initialDelay = 4000,        -- 4 seconds delay
+        spawnInterval = 4000,      -- 4 seconds
+        displayDuration = 8000,    -- 8 seconds
+        minSpeed = 120,             -- normal
+        maxSpeed = 200,
     },
     Hard = {
-        count = 2,
-        spawnInterval = 5000,      -- 10 seconds
-        displayDuration = math.huge, -- indefinite (stays until game ends)
+        count = 3,
+        initialDelay = 2000,           -- 2 seconds delay
+        spawnInterval = 3000,       -- 3 seconds
+        displayDuration = math.huge, -- indefinite
+        minSpeed = 180,             -- faster
+        maxSpeed = 280,
     }
 }
 
@@ -62,6 +74,7 @@ function birdsModule.init(sceneGroup, difficulty)
     
     local function createBirdObject()
         -- Create a bird object with physics
+        print("Creating bird object...")
         local bird
         local birdCreated = pcall(function()
             bird = display.newImageRect(self.sceneGroup, "images/bird.png", 64, 64)
@@ -69,9 +82,9 @@ function birdsModule.init(sceneGroup, difficulty)
         
         -- Fallback: create a colored rect if image fails
         if not birdCreated or not bird then
+            print("Bird image failed to load, using red rectangle fallback")
             bird = display.newRect(self.sceneGroup, 0, 0, 64, 64)
             bird:setFillColor(1, 0, 0)  -- Red rectangle as fallback
-            print("Warning: Bird image not found, using red rectangle fallback")
         end
         
         -- Randomly decide if bird comes from left or right
@@ -79,9 +92,11 @@ function birdsModule.init(sceneGroup, difficulty)
         if fromLeft then
             bird.x = -32  -- Start off-screen on the left
             bird.xScale = -1  -- Flipped (facing right)
+            print("Bird spawning from left")
         else
             bird.x = display.actualContentWidth + 32  -- Start off-screen on the right
             bird.xScale = 1  -- Normal direction (facing left)
+            print("Bird spawning from right")
         end
         
         -- Randomize Y position more (entire upper half of screen)
@@ -92,16 +107,20 @@ function birdsModule.init(sceneGroup, difficulty)
             physics.addBody(bird, "kinematic", {radius = 32, isSensor = true})
         end)
         
-        -- Set velocity for horizontal movement with random speed variation
-        local baseSpeed = 150
-        local speedVariation = math.random(80, 220)  -- 80-220 pixels per second
+        -- Set velocity based on difficulty
+        local minSpeed = self.config.minSpeed or 120
+        local maxSpeed = self.config.maxSpeed or 200
+        local birdSpeed = math.random(minSpeed, maxSpeed)
+        print("Bird speed: " .. birdSpeed)
+        
         if fromLeft then
-            bird:setLinearVelocity(speedVariation, 0)  -- Move right
+            bird:setLinearVelocity(birdSpeed, 0)  -- Move right
         else
-            bird:setLinearVelocity(-speedVariation, 0)  -- Move left
+            bird:setLinearVelocity(-birdSpeed, 0)  -- Move left
         end
         
         bird.isBird = true  -- Tag it as a bird for collision detection
+        print("Bird object created successfully")
         
         return bird
     end
@@ -133,8 +152,11 @@ function birdsModule.init(sceneGroup, difficulty)
     local function spawnBirds()
         -- Spawn birds based on the difficulty configuration
         if self.config.count == 0 then
+            print("Spawn skipped: config.count is 0")
             return
         end
+        
+        print("Attempting to spawn " .. self.config.count .. " birds...")
         
         for i = 1, self.config.count do
             local success, bird = pcall(function()
@@ -143,13 +165,15 @@ function birdsModule.init(sceneGroup, difficulty)
             
             if success and bird then
                 table.insert(self.birds, bird)
+                print("Bird " .. i .. " created successfully at x=" .. bird.x .. ", y=" .. bird.y)
                 
                 -- Schedule removal if not indefinite
                 if self.config.displayDuration ~= math.huge then
                     scheduleRemoveBird(bird, self.config.displayDuration)
+                    print("Bird " .. i .. " scheduled for removal in " .. self.config.displayDuration .. "ms")
                 end
             else
-                print("Error creating bird: ", bird)
+                print("Error creating bird " .. i .. ": " .. tostring(bird))
             end
         end
     end
@@ -167,28 +191,46 @@ function birdsModule.init(sceneGroup, difficulty)
         print("Starting bird spawning for difficulty: " .. self.difficulty)
         self.active = true
         
-        -- Spawn initial birds immediately
-        spawnBirds()
-        print("Initial birds spawned. Total birds: " .. #self.birds)
+        -- Schedule initial spawn with delay based on difficulty
+        local initialDelay = self.config.initialDelay or 0
+        print("Initial spawn delay: " .. initialDelay .. "ms")
         
-        -- Schedule periodic spawning with random intervals
-        if self.config.count > 0 then
-            local function scheduleNextSpawn()
-                if not self.active then return end
-                
-                -- Add randomness to spawn interval (80% to 120% of base interval)
-                local randomInterval = self.config.spawnInterval * (0.8 + math.random() * 0.4)
-                
-                self.spawnTimer = timer.performWithDelay(randomInterval, function()
-                    if self.active then
-                        spawnBirds()
-                        print("Periodic spawn triggered. Total birds: " .. #self.birds)
-                        scheduleNextSpawn()  -- Schedule next spawn with new random interval
-                    end
-                end)
-            end
+        local function scheduleNextSpawn()
+            if not self.active then return end
             
-            scheduleNextSpawn()
+            -- Add randomness to spawn interval (80% to 120% of base interval)
+            local randomInterval = self.config.spawnInterval * (0.8 + math.random() * 0.4)
+            
+            self.spawnTimer = timer.performWithDelay(randomInterval, function()
+                if self.active then
+                    spawnBirds()
+                    print("Periodic spawn triggered. Total birds: " .. #self.birds)
+                    scheduleNextSpawn()  -- Schedule next spawn with new random interval
+                end
+            end)
+            
+            -- Track the timer so it can be cancelled later
+            table.insert(self.birdTimers, self.spawnTimer)
+        end
+        
+        local function startPeriodicSpawning()
+            if not self.active then return end
+            
+            spawnBirds()
+            print("Initial birds spawned. Total birds: " .. #self.birds)
+            
+            -- Schedule periodic spawning with random intervals
+            if self.config.count > 0 then
+                scheduleNextSpawn()
+            end
+        end
+        
+        -- Delay initial spawn if needed
+        if initialDelay > 0 then
+            local initialTimer = timer.performWithDelay(initialDelay, startPeriodicSpawning)
+            table.insert(self.birdTimers, initialTimer)
+        else
+            startPeriodicSpawning()
         end
     end
     
