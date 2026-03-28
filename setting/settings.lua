@@ -1,6 +1,7 @@
 --yasmien
 local composer = require("composer")
 local settings = {}
+local myFont = "PressStart2P"
 
 function settings.init(sceneGroup, display, native, timer)
     local menuPanelGroup
@@ -10,6 +11,7 @@ function settings.init(sceneGroup, display, native, timer)
     local mtIcon
     local menuSfxLabel
     local stIcon
+    
 
     -- Store reference to callbacks
     local callbacks = {}
@@ -118,7 +120,7 @@ function settings.init(sceneGroup, display, native, timer)
             menuSfxLabel.text = "SFX: " .. (not currentSfxOn and "On" or "Off")
         end
         if stIcon and stIcon.text then
-            stIcon.text = (not currentSfxOn and "★" or "⦻")
+            stIcon.text = (not currentSfxOn and "🔊" or "🔇")
         end
     end
 
@@ -147,7 +149,7 @@ function settings.init(sceneGroup, display, native, timer)
                 local optBg = display.newRoundedRect(timerDropdown, baseX, y, optsW, optsH, 6)
                 optBg:setFillColor(0, 0.5, 0)
                 addHoverEffect(optBg)
-                local txt = display.newText(timerDropdown, tostring(i) .. " min", baseX, y, native.systemFont, 18)
+                local txt = display.newText(timerDropdown, tostring(i) .. " min", baseX, y, myFont, 18)
                 txt:setFillColor(1)
                 optBg:addEventListener("tap", function()
                     callbacks.saveTimerSetting(i)
@@ -177,7 +179,7 @@ function settings.init(sceneGroup, display, native, timer)
             local clearBg = display.newRoundedRect(timerDropdown, baseX, clearY, optsW, optsH, 6)
             clearBg:setFillColor(0.6, 0, 0)
             addRedHoverEffect(clearBg)
-            local clearTxt = display.newText(timerDropdown, "Clear timer", baseX, clearY, native.systemFontBold, 17)
+            local clearTxt = display.newText(timerDropdown, "Clear timer", baseX, clearY, myFont, 17)
             clearTxt:setFillColor(1)
             clearBg:addEventListener("tap", function()
                 callbacks.setTimerCleared(true)
@@ -223,7 +225,8 @@ function settings.init(sceneGroup, display, native, timer)
         pcall(function()
             local shadow = display.newRect(menuPanelGroup, display.contentCenterX, display.contentCenterY, display.actualContentWidth, display.actualContentHeight)
             shadow:setFillColor(0, 0, 0, 0.5)
-            shadow:addEventListener("tap", function() settings.closeMenu(); return true end)
+            -- Intercept taps on background to avoid accidental close
+            shadow:addEventListener("tap", function() return true end)
         end)
 
         pcall(function()
@@ -243,7 +246,7 @@ function settings.init(sceneGroup, display, native, timer)
             end
 
             -- Music row
-            local musicLabel = display.newText(menuPanelGroup, "Music: " .. (callbacks.getMusicOn() and "On" or "Off"), display.contentCenterX - 60, display.contentCenterY - 130, native.systemFontBold, 22)
+            local musicLabel = display.newText(menuPanelGroup, "Music: " .. (callbacks.getMusicOn() and "On" or "Off"), display.contentCenterX - 90, display.contentCenterY - 130, myFont, 12)
             musicLabel:setFillColor(1, 0.96, 0.24)
             menuMusicLabel = musicLabel
             musicLabel.anchorX = 0
@@ -252,12 +255,12 @@ function settings.init(sceneGroup, display, native, timer)
             musicBtn:setFillColor(0, 0, 0, 0)
             musicBtn:addEventListener("tap", function() toggleMusic(); return true end)
 
-            mtIcon = display.newText(menuPanelGroup, (callbacks.getMusicOn() and "♪" or "⦻"), display.contentCenterX + 70, display.contentCenterY - 130, native.systemFontBold, 35)
+            mtIcon = display.newText(menuPanelGroup, (callbacks.getMusicOn() and "♪" or "⦻"), display.contentCenterX + 70, display.contentCenterY - 130, native.systemFont, 30)
             mtIcon:setFillColor(1, 0.96, 0.24)
             mtIcon:addEventListener("tap", function() toggleMusic(); return true end)
 
             -- SFX row
-            local sfxLabel = display.newText(menuPanelGroup, "SFX: " .. (callbacks.getSfxOn() and "On" or "Off"), display.contentCenterX - 60, display.contentCenterY - 90, native.systemFontBold, 22)
+            local sfxLabel = display.newText(menuPanelGroup, "SFX: " .. (callbacks.getSfxOn() and "On" or "Off"), display.contentCenterX - 90, display.contentCenterY - 90, myFont, 12)
             sfxLabel:setFillColor(1, 0.96, 0.24)
             menuSfxLabel = sfxLabel
             sfxLabel.anchorX = 0
@@ -266,12 +269,12 @@ function settings.init(sceneGroup, display, native, timer)
             sfxBtn:setFillColor(0, 0, 0, 0)
             sfxBtn:addEventListener("tap", function() toggleSfx(); return true end)
 
-            stIcon = display.newText(menuPanelGroup, (callbacks.getSfxOn() and "★" or "⦻"), display.contentCenterX + 70, display.contentCenterY - 90, native.systemFontBold, 35)
+            stIcon = display.newText(menuPanelGroup, (callbacks.getSfxOn() and "🔊" or "🔇"), display.contentCenterX + 70, display.contentCenterY - 95, myFont, 30)
             stIcon:setFillColor(1, 0.96, 0.24)
             stIcon:addEventListener("tap", function() toggleSfx(); return true end)
 
             -- High Score
-            local hsText = display.newText(menuPanelGroup, "High Score: " .. tostring(callbacks.getHighScore()), display.contentCenterX, display.contentCenterY - 30, native.systemFontBold, 22)
+            local hsText = display.newText(menuPanelGroup, "High Score:" .. tostring(callbacks.getHighScore()), display.contentCenterX, display.contentCenterY - 30, myFont, 16)
             hsText:setFillColor(0,1,0)
 
             -- Close Button
