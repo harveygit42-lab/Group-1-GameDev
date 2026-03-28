@@ -17,6 +17,9 @@ physics.pause()
 -- GLOBAL VARIABLES
 -- =====================================================
 
+local backgroundMusic
+local bgChannel
+local popSound
 local tapCount = 0
 local gameOver = false
 local gameStarted = false
